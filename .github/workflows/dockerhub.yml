@@ -5,6 +5,9 @@ on:
   release:
     types: [published]
 
+env:
+  IMAGE_TAG: "${{ github.repository }}:${{ github.event.release.tag_name:1 }}"
+
 jobs:
   docker:
     runs-on: ubuntu-latest
@@ -23,10 +26,8 @@ jobs:
 #          password: ${{ secrets.DOCKER_TOKEN }}
       - 
         name: Event context
-        env:
-          TAG: ${{ github.repository }}:${{ github.event.release.tag_name }}
         run: |
-          echo "$TAG"
+          echo "$IMAGE_TAG"
 #      -
 #        name: Build and push
 #        id: docker_build
