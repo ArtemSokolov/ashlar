@@ -5,13 +5,16 @@ on:
   release:
     types: [published]
 
-env:
-  IMAGE_TAG: "${{ github.repository }}:${{ github.event.release.tag_name:1 }}"
-
 jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
+      -
+        name: Remove leading v from the release tag
+        id: rmv
+        run: |
+          sansv=$(echo ${{ github.event.release.tag_name }} | cut -c2-)
+          echo "::set-output name=tag::${{ github.repository }}:$sansv"
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v1
@@ -27,7 +30,7 @@ jobs:
       - 
         name: Event context
         run: |
-          echo "$IMAGE_TAG"
+          echo "${{steps.rmv.outputs.tag}}"
 #      -
 #        name: Build and push
 #        id: docker_build
